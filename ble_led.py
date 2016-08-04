@@ -3,6 +3,9 @@
 import sys, time
 from bluepy.btle import Peripheral
 
+# 0x0043 register
+# [0x56, red, green, blue, ???, 0xf0 for on or 0x0f for off, 0xaa]
+
 class BleLed(Peripheral):
 
     SOLID_COLOR_HDL = 0x0043
@@ -24,6 +27,7 @@ class BleLed(Peripheral):
 
         msg = str(bytearray([0x56, red, green, blue, 0x00, 0xf0, 0xaa]))
         self.writeCharacteristic(self.SOLID_COLOR_HDL, msg)
+
 
     def turn_off(self):
         msg = str(bytearray([0x56, 0x00, 0x00, 0x00, 0xff, 0x0f, 0xaa]))
