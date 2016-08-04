@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys
+import sys, time
 from bluepy.btle import Peripheral
 
 class BleLed(Peripheral):
@@ -25,6 +25,10 @@ class BleLed(Peripheral):
         msg = str(bytearray([0x56, red, green, blue, 0x00, 0xf0, 0xaa]))
         self.writeCharacteristic(self.SOLID_COLOR_HDL, msg)
 
+    def turn_off(self):
+        msg = str(bytearray([0x56, 0x00, 0x00, 0x00, 0xff, 0x0f, 0xaa]))
+        self.writeCharacteristic(self.SOLID_COLOR_HDL, msg)
+
 
 if __name__ == "__main__":
 
@@ -32,7 +36,10 @@ if __name__ == "__main__":
         with open('ble_dev') as f:
             ble_dev = f.read().strip()
         light = BleLed(ble_dev)
-        light.set_solid_color([int(x, 16) for x in sys.argv[1:]])
+        light.set_solid_color((0xff, 0xff, 0xff))
+        time.sleep(2)
+        light.turn_off()
+
 
     finally:
         light.disconnect()
