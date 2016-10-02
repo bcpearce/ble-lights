@@ -31,6 +31,10 @@ class BleLed(Peripheral):
         'white': (0xff, 0xff, 0xff)
     }
 
+    def __init__(self, duty, *args, **kwargs):
+        self.duty = duty
+        Peripheral.__init__(self, *args, **kwargs)
+
     def norm_color(self, color):
         red, green, blue = color
 
@@ -61,8 +65,7 @@ class BleLed(Peripheral):
         self.writeCharacteristic(self.SOLID_COLOR_HDL, msg)
 
     def fade_between(self, 
-        color1=(0xff, 0xff, 0xff), color2=(0x01, 0x01, 0x01), 
-        duty=0.01):
+        color1=(0xff, 0xff, 0xff), color2=(0x01, 0x01, 0x01)):
         current_color=color1
         diff_set = [1 if (y-x) > 0 else 0 for y, x in zip(color1, color2)]
         diff_set = [-1 if (y-x) < 0 else z for y, x, z in zip(color1, color2, diff_set)]
@@ -75,18 +78,18 @@ class BleLed(Peripheral):
                 zip(color1, current_color, color2)):
                 diff_set = [x*-1 for x in diff_set]
                 current_color = [x-diff for x, diff in zip(current_color, diff_set)]
-            time.sleep(duty)
+            time.sleep(self.duty)
 
-    def blink(self, color=(0xff, 0xff, 0xff), times=-1, duty=0.5):
+    def blink(self, color=(0xff, 0xff, 0xff), times=-1):
         i = 0
         while i < times:
             self.set_solid_color(color)
-            time.sleep(duty)
+            time.sleep(self.duty)
             self.turn_off()
-            time.sleep(duty)
+            time.sleep(self.duty)
             i += 1
 
-    def fade_to(self, color=(0xff, 0xff, 0xff), duty=0.1):
+    def fade_to(self, color=(0xff, 0xff, 0xff)):
         diff_set = [1 if (y-x) > 0 else 0 for y, x in zip(color, self.my_color)]
         diff_set = [-1 if (y-x) < 0 else z for y, x, z in zip(color, self.my_color, diff_set)]
         while not all(x == y for x, y in zip(self.my_color, color)):
@@ -94,33 +97,33 @@ class BleLed(Peripheral):
             self.my_color = [0x01 if x < 0 else x for x in self.my_color]
             self.my_color = [0xff if x > 0xff else x for x in self.my_color]
             self.set_solid_color(self.my_color)
-            time.sleep(duty)
+            time.sleep(self.duty)
 
-    def multi_fade(self, color_set, duty=0.1):
+    def multi_fade(self, color_set):
         self.set_solid_color(color_set[-1])
         while True:
             for color in color_set:
-                self.fade_to(color, duty)
+                self.fade_to(color)
 
-    def six_fade(self, duty=0.1):
+    def six_fade(self, duty=0.):
         color_wheel = self.SIX_COLORS.values()
-        self.multi_fade(color_wheel, duty)
+        self.multi_fade(color_wheel)
 
-    def seven_fade(self, duty=0.1):
+    def seven_fade(self):
         color_wheel = self.SEVEN_COLORS.values()
-        self.multi_fade(color_wheel, duty)
+        self.multi_fade(color_wheel)
 
 
 if __name__ == "__main__":
 
-    try:
+    #try:
         with open('ble_dev') as f:
             ble_dev = f.read().strip()
-        light = BleLed(ble_dev)
+        light = BleLed(0.05, ble_dev)
 
         light.blink(times=3)
-        light.seven_fade(duty=0.05)
+        light.seven_fade()
 
-    finally:
-        light.turn_off()
-        light.disconnect()
+    #finally:
+    #    light.turn_off()
+    #    light.disconnect()
