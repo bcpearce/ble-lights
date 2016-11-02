@@ -1,10 +1,27 @@
+</<!DOCTYPE html>
 <html>
-<h1>LED Lighting</h1>
-<form action="solid_color" method="POST">
-Select Color:
-<input type="color" name="color" value="{{ color }}">
-<input type="submit">
-</form>
-<form action="turn_off" method="GET">
-<input type="submit" value="Turn Off">
-</form>
+<head>
+    <title>LED Lighting</title>
+</head>
+<body>
+    <h1>LED Lighting</h1>
+
+    <form action="solid_color" method="POST">
+        Select Color:
+        <input type="color" name="color" value="{{ color }}">
+        <input type="submit">
+    </form>
+
+    <form action="six_fade" method="POST">
+        <input type="submit" value="Six (6) Fade">
+    </form>
+
+    <form action="seven_fade" method="POST">
+        <input type="submit" value="Seven (7) Fade">
+    </form>
+
+    <form action="turn_off" method="GET">
+        <input type="submit" value="Turn Off">
+    </form>
+</body>
+</html>
