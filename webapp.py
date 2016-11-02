@@ -1,5 +1,5 @@
 import sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from ble_led import BleLed
 from fader import Fader
 
@@ -12,34 +12,35 @@ fader = Fader(light)
 
 @app.route('/')
 def root():
-    return render_template('index.html', color="#FFFFFF")
+    color = request.args.get('color', '#FFFFFF')
+    return render_template('index.html', color=color)
 
 @app.route('/solid_color', methods=['POST'])
 def solid_color():
     color = request.form['color'][1:]
     rgb = [int(x, 16) for x in [color[i:i+2] for i in range(0, len(color), 2)]]
     fader.set_solid_color(rgb)
-    return render_template('index.html', color="#{0}".format(color))
+    return redirect(url_for('.root', color="#{0}".format(color)))
 
 @app.route('/turn_off', methods=['GET', 'POST'])
 def turn_off():
     fader.end_seq()
     fader.turn_off()
-    return render_template('index.html', color="#FFFFFF")
+    return redirect(url_for('.root', color="#FFFFFF"))
 
 @app.route('/six_fade', methods=['POST'])
 def six_fade():
     fader.end_seq()
     fader.set_six_fade()
     fader.start()
-    return render_template('index.html', color="#FFFFFF")
+    return redirect(url_for('.root', color="#FFFFFF"))
 
 @app.route('/seven_fade', methods=['POST'])
 def seven_fade():
     fader.end_seq()
     fader.set_seven_fade()
     fader.start()
-    return render_template('index.html', color="#FFFFFF")
+    return redirect(url_for('.root', color="#FFFFFF"))
 
 if __name__ == "__main__":
     ip = '0.0.0.0'
