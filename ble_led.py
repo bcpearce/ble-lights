@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import sys, time
+import sys, time, threading
+from collections import OrderedDict
 from bluepy.btle import Peripheral
 
 # 0x0043 register
@@ -12,24 +13,24 @@ class BleLed(Peripheral):
 
     SOLID_COLOR_HDL = 0x0043
 
-    SIX_COLORS = {
-        'red': (0xff, 0x00, 0x00),
-        'yellow': (0xff, 0xff, 0x00),
-        'green': (0x00, 0xff, 0x00),
-        'cyan': (0x00, 0xff, 0xff),
-        'blue': (0x00, 0x00, 0xff),
-        'magenta': (0xff, 0x00, 0xff)
-    }
+    SIX_COLORS = OrderedDict([
+        ('red', (0xff, 0x00, 0x00)),
+        ('yellow', (0xff, 0xff, 0x00)),
+        ('green', (0x00, 0xff, 0x00)),
+        ('cyan', (0x00, 0xff, 0xff)),
+        ('blue', (0x00, 0x00, 0xff)),
+        ('magenta', (0xff, 0x00, 0xff))
+    ])
 
-    SEVEN_COLORS = {
-        'red': (0xff, 0x00, 0x00),
-        'yellow': (0xff, 0xff, 0x00),
-        'green': (0x00, 0xff, 0x00),
-        'cyan': (0x00, 0xff, 0xff),
-        'blue': (0x00, 0x00, 0xff),
-        'magenta': (0xff, 0x00, 0xff),
-        'white': (0xff, 0xff, 0xff)
-    }
+    SEVEN_COLORS = OrderedDict([
+        ('red', (0xff, 0x00, 0x00)),
+        ('yellow', (0xff, 0xff, 0x00)),
+        ('green', (0x00, 0xff, 0x00)),
+        ('cyan', (0x00, 0xff, 0xff)),
+        ('blue', (0x00, 0x00, 0xff)),
+        ('magenta', (0xff, 0x00, 0xff)),
+        ('white', (0xff, 0xff, 0xff))
+    ])
 
     def __init__(self, duty, *args, **kwargs):
         self.duty = duty
@@ -89,7 +90,7 @@ class BleLed(Peripheral):
             time.sleep(self.duty)
             i += 1
 
-    def fade_to(self, color=(0xff, 0xff, 0xff)):
+    def fade_to(self, color=(0xff, 0xff, 0xff), flag=threading.Event()):
         diff_set = [1 if (y-x) > 0 else 0 for y, x in zip(color, self.my_color)]
         diff_set = [-1 if (y-x) < 0 else z for y, x, z in zip(color, self.my_color, diff_set)]
         while not all(x == y for x, y in zip(self.my_color, color)):
@@ -98,32 +99,34 @@ class BleLed(Peripheral):
             self.my_color = [0xff if x > 0xff else x for x in self.my_color]
             self.set_solid_color(self.my_color)
             time.sleep(self.duty)
+            if flag.isSet():
+                break
 
-    def multi_fade(self, color_set):
+    def multi_fade(self, color_set, flag=threading.Event()):
         self.set_solid_color(color_set[-1])
-        while True:
+        while not flag.isSet():
             for color in color_set:
-                self.fade_to(color)
+                self.fade_to(color, flag)
 
-    def six_fade(self, duty=0.):
+    def six_fade(self, flag):
         color_wheel = self.SIX_COLORS.values()
-        self.multi_fade(color_wheel)
+        self.multi_fade(color_wheel, flag)
 
-    def seven_fade(self):
+    def seven_fade(self, flag):
         color_wheel = self.SEVEN_COLORS.values()
-        self.multi_fade(color_wheel)
+        self.multi_fade(color_wheel, flag)
 
 
 if __name__ == "__main__":
 
-    #try:
+    try:
         with open('ble_dev') as f:
             ble_dev = f.read().strip()
         light = BleLed(0.05, ble_dev)
 
-        light.blink(times=3)
+        #light.blink(times=3)
         light.seven_fade()
 
-    #finally:
-    #    light.turn_off()
-    #    light.disconnect()
+    finally:
+        light.turn_off()
+        light.disconnect()

@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 with open('ble_dev') as f:
     dev = f.read().strip()
-light = BleLed(dev)
+light = BleLed(0.05, dev)
 
 @app.route('/')
 def root():
@@ -27,6 +27,9 @@ def turn_off():
 
 if __name__ == "__main__":
     ip = '0.0.0.0'
-    if len(sys.argv) == 2:
+    port = 5000
+    if len(sys.argv) >= 2:
         ip = sys.argv[1]
-    app.run(host = ip)
+    if len(sys.argv) == 3:
+        port = sys.argv[2]
+    app.run(host = ip, port=port)
