@@ -1,30 +1,49 @@
-</<!DOCTYPE html>
-<html>
-<head>
-    <title>LED Lighting</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-<div class="whole_page">
-    <h1>LED Lighting</h1>
+{%- extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as utils %}
 
-    <form action="solid_color" method="POST">
-    <label for="color">Select Color: </label>
-    <input type="color" name="color" value="{{ color }}">
-    <input type="submit">
-    </form>
-
-    <form action="six_fade" method="POST">
-        <input type="submit" value="Six (6) Fade">
-    </form>
-
-    <form action="seven_fade" method="POST">
-        <input type="submit" value="Seven (7) Fade">
-    </form>
-
-    <form action="turn_off" method="GET">
-        <input type="submit" value="Turn Off">
-    </form>
-</div>
-</body>
-</html>
+{% block content %}
+    <div class="container">
+    <div class="col-xs-12">
+        <div class="row">
+        <h1>LED Lighting</h1>
+        </div>
+        <p>
+        <div class="row">
+            <form action="solid_color" method="POST">
+                <div class="col-xs-4">
+                <label for="color">Select Color: </label>
+                </div>
+                <div class="col-xs-2">
+                <input type="color" name="color" value="{{ color }}">
+                </div>
+            <div class="col-xs-6">
+            <input type="submit" class="btn btn-large btn-block btn-primary">
+            </div>
+            </form>
+        </div>
+        </p>
+        <p>
+        <div class="row">
+        <form action="six_fade" method="POST">
+            <input type="submit" class="btn btn-large btn-block btn-primary" value="Six (6) Fade">
+        </form>
+        </div>
+        </p>
+        <p>
+        <div class="row">
+        <form action="seven_fade" method="POST">
+            <input type="submit" class="btn btn-large btn-block btn-primary" value="Seven (7) Fade">
+        </form>
+        </div>
+        </p>
+        <p>
+        <div class="row">
+        <form action="turn_off" method="GET">
+            <input type="submit" class="btn btn-large btn-block btn-primary" value="Turn Off">
+        </form>
+        </div>
+        </p>
+    </div>
+    </div>
+{%- endblock %}
