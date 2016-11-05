@@ -3,12 +3,18 @@ from flask import Flask, render_template, request, redirect, url_for
 from ble_led import BleLed
 from fader import Fader
 
-app = Flask(__name__)
+from flask_bootstrap import Bootstrap
+
+def create_app():
+    app = Flask(__name__)
+    Bootstrap(app)
+    return app
 
 with open('ble_dev') as f:
     dev = f.read().strip()
 light = BleLed(0.05, dev)
 fader = Fader(light)
+app = create_app()
 
 @app.route('/')
 def root():
@@ -43,6 +49,7 @@ def seven_fade():
     return redirect(url_for('.root', color="#FFFFFF"))
 
 if __name__ == "__main__":
+
     ip = '0.0.0.0'
     port = 5000
     if len(sys.argv) >= 2:

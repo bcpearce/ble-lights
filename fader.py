@@ -38,6 +38,8 @@ class Fader():
 
     def end_seq(self):
         self.flag.set()
+        if self.thread.isAlive():
+            self.thread.join()
         self.thread = threading.Thread(target=self.run)
 
     def __enter__(self):
@@ -65,10 +67,10 @@ if __name__ == "__main__":
             print "ending..."
             fader.end_seq()
             #wait for flag
-            fader.join()
+            #fader.join()
 
     except KeyboardInterrupt:
-        fader.join()
+        pass
 
     except Exception as e:
         print type(e)
