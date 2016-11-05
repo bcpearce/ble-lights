@@ -1,49 +1,63 @@
 {%- extends "bootstrap/base.html" %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='mcColorPicker.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('.static', filename='mcColorPicker.js')}}"></script>
+{{super()}}
+{% endblock %}
+
 {% import "bootstrap/fixes.html" as fixes %}
 {% import "bootstrap/utils.html" as utils %}
 
 {% block content %}
     <div class="container">
-    <div class="col-xs-12">
-        <div class="row">
-        <h1>LED Lighting</h1>
-        </div>
-        <p>
-        <div class="row">
-            <form action="solid_color" method="POST">
-                <div class="col-xs-4">
-                <label for="color">Select Color: </label>
-                </div>
-                <div class="col-xs-2">
-                <input type="color" name="color" value="{{ color }}">
-                </div>
-            <div class="col-xs-6">
-            <input type="submit" class="btn btn-large btn-block btn-primary">
+        <div class="col-md-4"></div>
+        <div class="col-xs-12 col-md-4">
+            <div class="row">
+            <h1>LED Lighting</h1>
             </div>
+            <p>
+            <div class="row">
+                <form action="solid_color" method="POST">
+                    <div class="col-xs-4">
+                    <label for="color">Select Color: </label>
+                    </div>
+                    <div class="col-xs-2">
+                    <input type="hidden" class="color" name="color" value="{{ color }}">
+                    </div>
+                <div class="col-xs-6">
+                <input type="submit" class="btn btn-large btn-block btn-primary">
+                </div>
+                </form>
+            </div>
+            </p>
+            <p>
+            <div class="row">
+            <form action="six_fade" method="POST">
+                <input type="submit" class="btn btn-large btn-block btn-primary" value="Six (6) Fade">
             </form>
+            </div>
+            </p>
+            <p>
+            <div class="row">
+            <form action="seven_fade" method="POST">
+                <input type="submit" class="btn btn-large btn-block btn-primary" value="Seven (7) Fade">
+            </form>
+            </div>
+            </p>
+            <p>
+            <div class="row">
+            <form action="turn_off" method="GET">
+                <input type="submit" class="btn btn-large btn-block btn-primary" value="Turn Off">
+            </form>
+            </div>
+            </p>
         </div>
-        </p>
-        <p>
-        <div class="row">
-        <form action="six_fade" method="POST">
-            <input type="submit" class="btn btn-large btn-block btn-primary" value="Six (6) Fade">
-        </form>
-        </div>
-        </p>
-        <p>
-        <div class="row">
-        <form action="seven_fade" method="POST">
-            <input type="submit" class="btn btn-large btn-block btn-primary" value="Seven (7) Fade">
-        </form>
-        </div>
-        </p>
-        <p>
-        <div class="row">
-        <form action="turn_off" method="GET">
-            <input type="submit" class="btn btn-large btn-block btn-primary" value="Turn Off">
-        </form>
-        </div>
-        </p>
-    </div>
+        <div class="col-md-4"></div>
     </div>
 {%- endblock %}
