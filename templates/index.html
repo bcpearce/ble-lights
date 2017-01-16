@@ -4,6 +4,7 @@
 {{super()}}
 <link rel="stylesheet"
       href="{{url_for('.static', filename='mcColorPicker.css')}}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 {% endblock %}
 
 {% block scripts %}
@@ -58,9 +59,10 @@
             </div>
             </p>
             <div class="row">
-            <p></p>
-            <p>Check out this project on <a href="https://github.com/bcpearce/ble-lights">GitHub</a></p>
-            </div>
+            <p>
+                  <a href="https://github.com/bcpearce/ble-lights"> Check out this project on GitHub </a>            
+	    </p>
+	    </div>
         </div>
 
         <div class="col-md-4 col-sm-3"></div>
